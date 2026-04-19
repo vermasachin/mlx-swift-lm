@@ -529,6 +529,168 @@ actor ServerPromptCache {
         }
         return maxLen
     }
+
+    /// Register a session with a cache built externally (e.g. restored from a
+    /// SegmentCache snapshot). Behaves like freshCache but uses the provided
+    /// cache + already-known prefix tokens.
+    func adoptExternalCache(tokens: [Int], cache: [KVCache]) -> UUID {
+        evictIfNeeded()
+        let session = CachedSession(tokenIds: tokens, kvCache: cache, lastUsed: Date())
+        sessions.append(session)
+        recordRequest(hit: true, prefillTokens: 0, reusedTokens: tokens.count)
+        return session.id
+    }
+}
+
+// MARK: - Segment Cache (ported from Python mlx-lm #1072)
+//
+// Stores reusable KV cache state for stable prompt prefixes. The key problem
+// it solves: hybrid Mamba+attention models (Qwen3.5/3.6) can't trim Mamba
+// layers, so the standard trim-in-place cache reuse breaks down whenever the
+// new prompt diverges from the cached prompt. opencode hits this every turn
+// because the chat template re-renders historical assistant content with a
+// 1-token drift.
+//
+// Segment caching sidesteps the trim problem: we store a deep-copied snapshot
+// of the cache state at a stable prefix boundary (end of system prompt /
+// start of first user turn). On subsequent requests, if the new prompt's
+// first N tokens match a saved segment exactly, we restore that segment's
+// state into a fresh cache and prefill only the divergent tail. Never asks
+// Mamba to rewind — only forward-extend.
+actor SegmentCache {
+    struct Entry {
+        let tokens: [Int]                  // the exact tokens this segment represents
+        let cacheState: [[MLXArray]]       // one per-layer state, deep-copied
+        let metaState: [[String]]          // per-layer meta
+        let hash: Int
+        let createdAt: Date
+    }
+
+    private var entries: [Entry] = []
+    private let maxEntries: Int
+    /// Token-level minimum below which we don't bother saving a segment.
+    /// Small segments don't save meaningful prefill time and just churn entries.
+    private let minSegmentSize: Int
+    /// Hashes of segments currently being built, to dedupe concurrent background
+    /// builds for the same prefix.
+    private var buildingHashes: Set<Int> = []
+
+    init(maxEntries: Int = 4, minSegmentSize: Int = 200) {
+        self.maxEntries = maxEntries
+        self.minSegmentSize = minSegmentSize
+    }
+
+    /// Find the longest stored segment that is a strict prefix of `tokens`.
+    /// Returns (matched length, per-layer state, per-layer metaState).
+    func findLongestPrefix(_ tokens: [Int]) -> (length: Int, state: [[MLXArray]], metaState: [[String]])? {
+        var best: (length: Int, state: [[MLXArray]], metaState: [[String]])? = nil
+        for entry in entries where tokens.count > entry.tokens.count {
+            // Prefix check without allocating a subarray (entry.tokens.count can be >10k)
+            if entry.tokens.elementsEqual(tokens.prefix(entry.tokens.count)) {
+                if best == nil || entry.tokens.count > best!.length {
+                    best = (entry.tokens.count, entry.cacheState, entry.metaState)
+                }
+            }
+        }
+        return best
+    }
+
+    /// True if a segment with these exact tokens is already stored (so callers
+    /// can skip redundant background build work).
+    func has(tokens: [Int]) -> Bool {
+        entries.contains(where: { $0.tokens.count == tokens.count && $0.tokens == tokens })
+    }
+
+    /// Mark a hash as being built right now so concurrent requests don't fire
+    /// duplicate background builds for the same prefix. Returns false if
+    /// already in-flight.
+    func beginBuild(hash: Int) -> Bool {
+        if buildingHashes.contains(hash) { return false }
+        buildingHashes.insert(hash)
+        return true
+    }
+
+    func endBuild(hash: Int) {
+        buildingHashes.remove(hash)
+    }
+
+    func save(tokens: [Int], cacheState: [[MLXArray]], metaState: [[String]]) {
+        guard tokens.count >= minSegmentSize else { return }
+        let h = tokens.hashValue
+        if entries.contains(where: { $0.hash == h && $0.tokens == tokens }) { return }
+        entries.append(Entry(tokens: tokens, cacheState: cacheState, metaState: metaState,
+                             hash: h, createdAt: Date()))
+        // LRU-ish: evict the oldest when over capacity
+        while entries.count > maxEntries {
+            entries.removeFirst()
+        }
+        log("SegmentCache: saved segment (\(tokens.count) tokens, total entries=\(entries.count))")
+    }
+
+    func count() -> Int { entries.count }
+}
+
+// MARK: - Segment helpers
+
+/// Find the segment boundary: position of the first `<|im_start|>user`
+/// marker in the token array. Everything before that is the "system +
+/// tools" baseline that stays stable across opencode turns.
+/// Returns nil if no user marker is found or the marker encoding is empty.
+///
+/// Callers must tokenize the marker themselves via `ctx.tokenizer` and pass
+/// it in — we avoid importing `Tokenizers` at this scope because it collides
+/// with Swift's `Codable.Decoder` type.
+func findFirstSubsequence(_ tokens: [Int], marker: [Int]) -> Int? {
+    guard marker.count > 0, tokens.count >= marker.count else { return nil }
+    outer: for i in 0...(tokens.count - marker.count) {
+        for j in 0..<marker.count {
+            if tokens[i + j] != marker[j] { continue outer }
+        }
+        return i
+    }
+    return nil
+}
+
+/// Deep-copy the state of all cache layers into arrays that can survive
+/// across requests. Uses `+ MLXArray(Float32(0))` to force MLX to materialise
+/// a new array (otherwise `state` returns a lazy slice-view sharing memory
+/// with the original cache — mutating either side corrupts both).
+func snapshotCacheState(_ cache: [KVCache]) -> (state: [[MLXArray]], metaState: [[String]]) {
+    var states: [[MLXArray]] = []
+    var metas: [[String]] = []
+    states.reserveCapacity(cache.count)
+    metas.reserveCapacity(cache.count)
+    for c in cache {
+        let snapshot = c.state.map { $0 + MLXArray(Float32(0)) }
+        // Force MLX to materialise now so the snapshot doesn't dangle on a
+        // compute graph that still references the live cache.
+        if !snapshot.isEmpty { eval(snapshot) }
+        states.append(snapshot)
+        metas.append(c.metaState)
+    }
+    return (states, metas)
+}
+
+/// Restore a previously-snapshotted state into a fresh cache array.
+/// Assumes `fresh` was just created via `model.newCache(...)` and has the
+/// same layer count/types as when the snapshot was taken. The state/metaState
+/// setters on the KVCache protocol require a mutable (AnyObject-backed)
+/// reference; BaseKVCache exposes these as `open var`, so cast through it.
+func restoreCacheState(into fresh: [KVCache], from state: [[MLXArray]], metaState: [[String]]) {
+    guard fresh.count == state.count else {
+        log("restoreCacheState: layer count mismatch (\(fresh.count) vs \(state.count))")
+        return
+    }
+    for i in 0..<fresh.count where !state[i].isEmpty {
+        guard let base = fresh[i] as? BaseKVCache else {
+            log("restoreCacheState: layer[\(i)] is not BaseKVCache (type=\(type(of: fresh[i])))")
+            continue
+        }
+        if i < metaState.count && !metaState[i].isEmpty {
+            base.metaState = metaState[i]
+        }
+        base.state = state[i]
+    }
 }
 
 enum CacheStatus {
@@ -775,7 +937,9 @@ final class SimpleHTTPServer {
     let container: ModelContainer
     let modelId: String
     let promptCache: ServerPromptCache
+    let segmentCache: SegmentCache
     let slotManager: SlotManager
+    let kvScheme: String?
     private var serverSocket: Int32 = -1
     private var memoryPressureSource: DispatchSourceMemoryPressure?
     static let maxBodySize = 10 * 1024 * 1024
@@ -794,8 +958,10 @@ final class SimpleHTTPServer {
         self.port = port
         self.container = container
         self.modelId = modelId
+        self.kvScheme = kvScheme
         let maxSess = SimpleHTTPServer.autoMaxSessions()
         self.promptCache = ServerPromptCache(maxSessions: maxSess, kvScheme: kvScheme)
+        self.segmentCache = SegmentCache()
         self.slotManager = SlotManager(slotCount: slotCount)
         log("Auto-configured: \(maxSess) max cached sessions (\(ProcessInfo.processInfo.physicalMemory / (1024*1024*1024))GB RAM)")
         log("Parallel inference slots: \(slotCount) (resize at runtime via POST /admin/slots)")
@@ -1101,6 +1267,10 @@ final class SimpleHTTPServer {
         // past the function return so the next `acquireSlot()` sees the slot
         // still in use. Cleanup is awaited inline in all exit paths.
 
+        // Hoisted for the background segment-build check after cleanup.
+        var segmentHit = false
+        var outerTokens: [Int] = []
+
         do {
             slot.state = .prefilling
             var ctx = await container.perform { ctx in ctx }
@@ -1183,20 +1353,67 @@ final class SimpleHTTPServer {
             let lastTokensText = ctx.tokenizer.decode(tokens: Array(tokens.suffix(8)))
             let promptPrefillsThink = lastTokensText.contains("<think>")
             log("  think detection: lastTokensText=\(lastTokensText.debugDescription) prefillsThink=\(promptPrefillsThink)")
-            // Prompt caching: reuse KV state from previous requests
             let prefillStart = CFAbsoluteTimeGetCurrent()
-            let (reusedCache, fetchedNewTokens, cacheStatus, sessionId) = await promptCache.fetch(tokens: tokens, model: ctx.model)
-            await promptCache.markInUse(sessionId)
-            markedSessionId = sessionId
 
-            // If the cache fully matched (newTokens empty), trim one slot so the
-            // model has a seed token to decode from. Without this we'd pass the
-            // entire prompt to generate(), defeating the cache hit entirely.
-            var newTokens = fetchedNewTokens
-            if newTokens.isEmpty, let last = tokens.last {
-                for c in reusedCache { _ = c.trim(1) }
-                newTokens = [last]
+            // Segment cache: try to find a large stable prefix (e.g. the
+            // system+tools baseline from opencode) that's already been
+            // prefilled into a snapshot we can restore. If so, we skip
+            // ~12,000 tokens of prefill every turn. Works where the normal
+            // session cache can't (hybrid Mamba that won't trim).
+            var reusedCache: [KVCache]
+            var newTokens: [Int]
+            var cacheStatus: CacheStatus
+            var sessionId: UUID
+            outerTokens = tokens
+
+            // Segment cache restore: skip on hybrid Mamba models for now. The
+            // `restoreCacheState(...)` path triggers MLX's lazy-kernel compiler
+            // on previously-unseen Mamba gated-delta shapes (e.g.
+            // gated_delta_step_fused_float32_128_128_16_32) and fatal-errors.
+            // Tracked separately; until resolved, segment cache only benefits
+            // pure-attention models. The segment entries still build in the
+            // background so the fix will kick in once the kernel issue is
+            // resolved without any data migration.
+            let probeCache = ctx.model.newCache(parameters: kvScheme.map { GenerateParameters(kvScheme: $0) })
+            let segmentRestoreSafe = !probeCache.contains { String(describing: type(of: $0)).contains("MambaCache") }
+
+            if segmentRestoreSafe, let seg = await segmentCache.findLongestPrefix(tokens) {
+                // Build a fresh cache and load the snapshot state into it.
+                let kvParams = kvScheme.map { GenerateParameters(kvScheme: $0) }
+                var freshCache = ctx.model.newCache(parameters: kvParams)
+                restoreCacheState(into: freshCache, from: seg.state, metaState: seg.metaState)
+                reusedCache = freshCache
+                newTokens = Array(tokens[seg.length...])
+                if newTokens.isEmpty, let last = tokens.last {
+                    // Should be rare — only if the request exactly equals a
+                    // saved segment. Trim 1 and re-feed so generate() has a
+                    // decode input.
+                    for c in reusedCache { _ = c.trim(1) }
+                    newTokens = [last]
+                }
+                cacheStatus = .hit(prefixReused: seg.length, totalTokens: tokens.count, newTokens: newTokens.count)
+                // Register a fresh session for this request so save/markIdle still work.
+                // We bypass promptCache.fetch so construct a session directly.
+                sessionId = await promptCache.adoptExternalCache(tokens: Array(tokens[0..<seg.length]), cache: freshCache)
+                await promptCache.markInUse(sessionId)
+                markedSessionId = sessionId
+                segmentHit = true
+                log("  segment-cache HIT: reused \(seg.length)/\(tokens.count) tokens, new=\(newTokens.count)")
+            } else {
+                let fetched = await promptCache.fetch(tokens: tokens, model: ctx.model)
+                reusedCache = fetched.0
+                newTokens = fetched.1
+                cacheStatus = fetched.2
+                sessionId = fetched.3
+                await promptCache.markInUse(sessionId)
+                markedSessionId = sessionId
+
+                if newTokens.isEmpty, let last = tokens.last {
+                    for c in reusedCache { _ = c.trim(1) }
+                    newTokens = [last]
+                }
             }
+
             let tokenArray = MLXArray(newTokens)
             let input = LMInput(text: LMInput.Text(tokens: tokenArray))
 
@@ -1597,6 +1814,67 @@ final class SimpleHTTPServer {
             await promptCache.markIdle(sid)
         }
         await slotManager.releaseSlot(slot)
+
+        // Background segment build: if this request didn't hit the segment
+        // cache AND looks like an opencode-style request (large system+tools
+        // baseline before the first user turn), prefill just the stable
+        // prefix into a fresh cache and save it. Amortises to zero on
+        // subsequent turns — next time we get a cache hit and skip ~12k
+        // tokens of prefill.
+        //
+        // Detached so it doesn't delay the response to the user. Runs with
+        // normal priority because the model is GPU-bound; a lower priority
+        // doesn't actually cede any real resources.
+        // Segment build: only fires if this request went through the normal
+        // prefill path AND there's a user-message boundary to split at. The
+        // segment itself must be large enough to actually save time on reuse
+        // (the SegmentCache.save() check enforces that minSegmentSize).
+        if !segmentHit {
+            let tokensForBuild = outerTokens
+            let marker = (try? await container.perform { ctx in
+                ctx.tokenizer.encode(text: "<|im_start|>user", addSpecialTokens: false)
+            }) ?? []
+            if let boundary = findFirstSubsequence(tokensForBuild, marker: marker) {
+                let segmentTokens = Array(tokensForBuild[0..<boundary])
+                let hash = segmentTokens.hashValue
+                if await segmentCache.beginBuild(hash: hash) {
+                    // Another fresh Task — fully detached. Careful capture.
+                    let container = self.container
+                    let kvScheme = self.kvScheme
+                    let segmentCache = self.segmentCache
+                    Task.detached {
+                        defer { Task { await segmentCache.endBuild(hash: hash) } }
+                        if await segmentCache.has(tokens: segmentTokens) { return }
+                        log("SegmentCache: background build starting (\(segmentTokens.count) tokens)")
+                        let t0 = CFAbsoluteTimeGetCurrent()
+                        do {
+                            let ctx = await container.perform { ctx in ctx }
+                            let kvParams = kvScheme.map { GenerateParameters(kvScheme: $0) }
+                            let cache = ctx.model.newCache(parameters: kvParams)
+                            var params = GenerateParameters(temperature: 0.0)
+                            if let kv = kvScheme { params = GenerateParameters(kvScheme: kv); params.temperature = 0.0 }
+                            params.maxTokens = 1  // minimum; we discard generation
+                            let inp = LMInput(text: LMInput.Text(tokens: MLXArray(segmentTokens)))
+                            // Constructing the TokenIterator runs prefill and leaves
+                            // the cache at exactly segmentTokens.count positions.
+                            _ = try TokenIterator(
+                                input: inp, model: ctx.model, cache: cache, parameters: params)
+                            let snapshot = snapshotCacheState(cache)
+                            await segmentCache.save(
+                                tokens: segmentTokens,
+                                cacheState: snapshot.state,
+                                metaState: snapshot.metaState)
+                            let dt = Int((CFAbsoluteTimeGetCurrent() - t0) * 1000)
+                            log("SegmentCache: background build complete in \(dt)ms")
+                        } catch {
+                            log("SegmentCache: background build failed: \(error)")
+                        }
+                    }
+                } else {
+                    log("SegmentCache: build for this prefix already in flight; skipping")
+                }
+            }
+        }
     }
 
     func handleCompletions(fd: Int32, prompt: String, maxTokens: Int, temperature: Float, stream: Bool, corsOrigin: String = "*") async {
@@ -1924,26 +2202,42 @@ struct MLXServerApp {
         // rotary embeddings, MLP, optional TurboQuant ops) to compile serially.
         // Empirically ~1-3 seconds, worth it to avoid crashes on the first
         // concurrent burst.
+        // Warmup runs TWO passes to exercise different kernel families:
+        //   1. A longer prefill + decode (~64 prompt tokens, 16 generated).
+        //      This covers standard SDPA, MLP, rotary, and the turboquant
+        //      path. For hybrid models this also hits Mamba's gated-delta-net
+        //      kernels at a realistic shape.
+        //   2. A "restore into fresh cache then extend" pass. This mirrors
+        //      what SegmentCache does on a hit — load a snapshot and prefill
+        //      more tokens on top. Exercises the specific kernel variants
+        //      that segment-hit decode actually uses (shape-specific).
+        // Without this, the first segment-cache hit can fatal-error with
+        // "Unable to load function gated_delta_step_fused_..." from MLX's
+        // lazy kernel compiler racing on a never-before-seen shape.
         do {
-            log("Warming up model kernels...")
+            log("Warming up model kernels (pass 1/2)...")
             let ctx = await container.perform { ctx in ctx }
             let kvParams = kvScheme.map { GenerateParameters(kvScheme: $0) }
+            // Longer warmup string so Mamba's gated-delta-net gets shape-realistic input.
+            let warmupText = String(repeating: "Lorem ipsum dolor sit amet consectetur adipiscing elit. ", count: 8)
+            let tokens = ctx.tokenizer.encode(text: warmupText, addSpecialTokens: true)
             let cache = ctx.model.newCache(parameters: kvParams)
-            let tokens = ctx.tokenizer.encode(text: "hello", addSpecialTokens: true)
-            let input = LMInput(text: LMInput.Text(tokens: MLXArray(tokens.isEmpty ? [0] : tokens)))
             var params = GenerateParameters(temperature: 0.0)
             if let kv = kvScheme { params = GenerateParameters(kvScheme: kv); params.temperature = 0.0 }
-            params.maxTokens = 4
+            params.maxTokens = 16
             var n = 0
             let start = CFAbsoluteTimeGetCurrent()
+            let input = LMInput(text: LMInput.Text(tokens: MLXArray(tokens.isEmpty ? [0] : tokens)))
             for try await gen in try generate(input: input, cache: cache, parameters: params, context: ctx) {
-                if case .chunk = gen {
-                    n += 1
-                    if n >= 2 { break }
-                }
+                if case .chunk = gen { n += 1; if n >= 8 { break } }
             }
-            let ms = Int((CFAbsoluteTimeGetCurrent() - start) * 1000)
-            log("Warmup complete: \(n) tokens in \(ms)ms")
+            let dt1 = Int((CFAbsoluteTimeGetCurrent() - start) * 1000)
+            log("Warmup pass 1 complete: \(tokens.count) prompt + \(n) gen tokens in \(dt1)ms")
+            // Note: a "restore into fresh cache then extend" warmup pass was
+            // attempted here to pre-compile the segment-cache-hit kernel path,
+            // but it itself triggered the gated-delta-net kernel crash we were
+            // trying to prevent (circular problem). Removed until we understand
+            // the MLX lazy-kernel compilation race better.
         } catch {
             // Non-fatal — if warmup fails, production requests will compile
             // kernels themselves. Log loudly so we can investigate.

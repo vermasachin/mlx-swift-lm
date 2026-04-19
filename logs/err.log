@@ -1,0 +1,412 @@
+2026-04-18T15:00:18: [MLXServer] Loading model: /Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-UD-MLX-4bit
+2026-04-18T15:00:23: [MLXServer] Auto-configured: 10 max cached sessions (48GB RAM)
+2026-04-18T15:00:23: [MLXServer] Parallel inference slots: 1
+2026-04-18T15:00:23: [MLXServer] KV cache scheme: turbo4v2
+2026-04-18T15:00:23: [MLXServer] Listening on http://127.0.0.1:8091
+2026-04-18T15:00:23: [MLXServer] Endpoints: GET /v1/models, POST /v1/chat/completions, GET /tokenizer_info, POST /tokenize, GET /metrics, GET /slots
+2026-04-18T15:00:25: [MLXServer] GET /v1/models (0 bytes)
+2026-04-18T15:00:25: [MLXServer] GET /v1/models completed in 1ms
+2026-04-18T15:00:34: [MLXServer] POST /v1/chat/completions (122 bytes)
+2026-04-18T15:00:34: [MLXServer] slot[0] acquired for chatcmpl-B526152D (active: 1/1)
+2026-04-18T15:00:34: [MLXServer]   think detection: lastTokensText=" hello<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:00:34: [MLXServer] slot[0] cache=miss tokens=15 sessions=1 prefill=15 stream=false tools=0 think_prefilled=true
+2026-04-18T15:00:38: [MLXServer]   non-streaming fullText (113ch): Thinking Process:
+2026-04-18T15:00:38: 1.  **Analyze User Input:** The user explicitly requested "Reply with only: hello".
+2026-04-18T15:00:38: 2.  **Ident
+2026-04-18T15:00:38: [MLXServer]   non-streaming fullText repr: "Thinking Process:\n1.  **Analyze User Input:** The user explicitly requested \"Reply with only: hello\".\n2.  **Ident"
+2026-04-18T15:00:38: [MLXServer] POST /v1/chat/completions completed in 4291ms
+2026-04-18T15:00:38: [MLXServer] POST /v1/chat/completions (133 bytes)
+2026-04-18T15:00:38: [MLXServer] slot[0] acquired for chatcmpl-229DEB5D (active: 1/1)
+2026-04-18T15:00:38: [MLXServer]   think detection: lastTokensText=".<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:00:38: [MLXServer] slot[0] cache=hit prefix=3/22 new=19 prefill=19 stream=true tools=0 think_prefilled=true
+2026-04-18T15:00:39: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:00:39: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:00:39: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:00:39: [MLXServer]   chunk[3]: +11ch fullText=19ch emitted=0 think=true
+2026-04-18T15:00:40: [MLXServer]   chunk[50]: +2ch fullText=210ch emitted=0 think=true
+2026-04-18T15:00:40: [MLXServer]   .info: tokens=61 fullText=251ch emitted=0 hadToolCall=false think=true thinkText=251ch
+2026-04-18T15:00:40: [MLXServer]   fullText preview: The user explicitly requested "Reply with only: hello".
+2026-04-18T15:00:40: The instruction is very specific: "only: hello".
+2026-04-18T15:00:40: I need to output exactly the word "hello" and nothing else.
+2026-04-18T15:00:40: No extra text, no explanations, just "hello".
+2026-04-18T15:00:40: Checking the exact phrasing: "Reply with
+2026-04-18T15:00:40: [MLXServer] POST /v1/chat/completions completed in 1831ms
+2026-04-18T15:01:25: [MLXServer] GET /metrics (0 bytes)
+2026-04-18T15:01:25: [MLXServer] GET /metrics completed in 0ms
+2026-04-18T15:02:58: [MLXServer] POST /v1/chat/completions (389 bytes)
+2026-04-18T15:02:58: [MLXServer] slot[0] acquired for chatcmpl-D4D7A2A5 (active: 1/1)
+2026-04-18T15:02:58: [MLXServer]   think detection: lastTokensText="\n<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:02:58: [MLXServer] slot[0] cache=hit prefix=3/10 new=7 prefill=7 stream=false tools=0 think_prefilled=true
+2026-04-18T15:02:59: [MLXServer]   non-streaming fullText (113ch): Thinking Process:
+2026-04-18T15:02:59: 1.  **Analyze User Input:** The user explicitly requested "Reply with only: hello".
+2026-04-18T15:02:59: 2.  **Ident
+2026-04-18T15:02:59: [MLXServer]   non-streaming fullText repr: "Thinking Process:\n1.  **Analyze User Input:** The user explicitly requested \"Reply with only: hello\".\n2.  **Ident"
+2026-04-18T15:02:59: [MLXServer] POST /v1/chat/completions completed in 1089ms
+2026-04-18T15:03:11: [MLXServer] POST /v1/chat/completions (2585 bytes)
+2026-04-18T15:03:11: [MLXServer] slot[0] acquired for chatcmpl-CC20403A (active: 1/1)
+2026-04-18T15:03:11: [MLXServer]   think detection: lastTokensText="?<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:03:11: [MLXServer] slot[0] cache=hit prefix=1/554 new=553 prefill=553 stream=true tools=0 think_prefilled=true
+2026-04-18T15:03:11: [MLXServer] POST /v1/chat/completions (56006 bytes)
+2026-04-18T15:03:15: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:03:15: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:03:15: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:03:15: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:03:15: [MLXServer]   chunk[50]: +1ch fullText=212ch emitted=0 think=true
+2026-04-18T15:03:16: [MLXServer]   chunk[100]: +7ch fullText=396ch emitted=0 think=true
+2026-04-18T15:03:17: [MLXServer]   chunk[150]: +3ch fullText=589ch emitted=0 think=true
+2026-04-18T15:03:17: [MLXServer]   chunk[200]: +5ch fullText=774ch emitted=0 think=true
+2026-04-18T15:03:18: [MLXServer]   chunk[250]: +3ch fullText=951ch emitted=0 think=true
+2026-04-18T15:03:19: [MLXServer]   chunk[300]: +3ch fullText=1138ch emitted=0 think=true
+2026-04-18T15:03:20: [MLXServer]   chunk[350]: +4ch fullText=1314ch emitted=0 think=true
+2026-04-18T15:03:20: [MLXServer]   chunk[400]: +1ch fullText=1462ch emitted=0 think=true
+2026-04-18T15:03:20: [MLXServer]   think block ended, fullText=1471ch
+2026-04-18T15:03:20: [MLXServer]   .info: tokens=407 fullText=15ch emitted=15 hadToolCall=false think=false thinkText=1463ch
+2026-04-18T15:03:20: [MLXServer]   fullText preview: Readme contents
+2026-04-18T15:03:20: [MLXServer] slot[0] acquired for chatcmpl-FB066A73 (active: 1/1)
+2026-04-18T15:03:20: [MLXServer] POST /v1/chat/completions completed in 9370ms
+2026-04-18T15:03:21: [MLXServer]   think detection: lastTokensText="?<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:03:21: [MLXServer] slot[0] cache=hit prefix=3/12617 new=12614 prefill=12614 stream=true tools=11 think_prefilled=true
+2026-04-18T15:04:20: [MLXServer] GET /metrics (0 bytes)
+2026-04-18T15:04:20: [MLXServer] GET /metrics completed in 0ms
+2026-04-18T15:04:20: [MLXServer] GET /slots (0 bytes)
+2026-04-18T15:04:20: [MLXServer] GET /slots completed in 0ms
+2026-04-18T15:04:36: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:04:36: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:04:36: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:04:36: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:04:37: [MLXServer]   think block ended, fullText=114ch
+2026-04-18T15:04:37: [MLXServer]   .info: tokens=28 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=106ch
+2026-04-18T15:04:37: [MLXServer]   fullText preview: 
+2026-04-18T15:04:37: 
+2026-04-18T15:04:37: 
+2026-04-18T15:04:37: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:04:37: [MLXServer] POST /v1/chat/completions completed in 86197ms
+2026-04-18T15:04:37: [MLXServer] POST /v1/chat/completions (63328 bytes)
+2026-04-18T15:04:37: [MLXServer] slot[0] acquired for chatcmpl-9C34C4C4 (active: 1/1)
+2026-04-18T15:04:37: [MLXServer]   think detection: lastTokensText="><|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:04:37: [MLXServer] slot[0] cache=hit prefix=12615/14601 new=1986 prefill=1986 stream=true tools=11 think_prefilled=true
+2026-04-18T15:04:50: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:04:50: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:04:50: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:04:50: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:04:51: [MLXServer]   think block ended, fullText=85ch
+2026-04-18T15:04:51: [MLXServer]   chunk[50]: +1ch fullText=138ch emitted=137 think=false
+2026-04-18T15:04:52: [MLXServer]   chunk[100]: +3ch fullText=333ch emitted=330 think=false
+2026-04-18T15:04:53: [MLXServer]   chunk[150]: +5ch fullText=537ch emitted=532 think=false
+2026-04-18T15:04:54: [MLXServer]   chunk[200]: +4ch fullText=725ch emitted=721 think=false
+2026-04-18T15:04:54: [MLXServer]   .info: tokens=241 fullText=877ch emitted=877 hadToolCall=false think=false thinkText=77ch
+2026-04-18T15:04:54: [MLXServer]   fullText preview: The README describes **geomon**, a geospatial situational-awareness UI — a single-page map app that overlays live data (aircraft, vessels, conflicts, webcams, earthquakes, wildfires, weather alerts, infrastructure) on a dark MapLibre base map.
+2026-04-18T15:04:54: 
+2026-04-18T15:04:54: **Stack**: React 19 + TypeScript + Vite, MapLibre GL + deck.gl, Zustand state, hosted on Cloudflare Pages.
+2026-04-18T15:04:54: 
+2026-04-18T15:04:54: **Key features**:
+2026-04-18T15:04:54: - Persistable tab layouts (Ho
+2026-04-18T15:04:55: [MLXServer] POST /v1/chat/completions completed in 17192ms
+2026-04-18T15:05:00: [MLXServer] POST /v1/chat/completions (64412 bytes)
+2026-04-18T15:05:00: [MLXServer] slot[0] acquired for chatcmpl-73FFDEF8 (active: 1/1)
+2026-04-18T15:05:00: [MLXServer]   think detection: lastTokensText="?<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:05:00: [MLXServer] slot[0] cache=hit prefix=14599/14840 new=241 prefill=241 stream=true tools=11 think_prefilled=true
+2026-04-18T15:05:02: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:05:02: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:05:02: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:05:02: [MLXServer]   chunk[3]: +3ch fullText=11ch emitted=0 think=true
+2026-04-18T15:05:03: [MLXServer]   chunk[50]: +1ch fullText=185ch emitted=0 think=true
+2026-04-18T15:05:03: [MLXServer]   think block ended, fullText=193ch
+2026-04-18T15:05:03: [MLXServer]   .info: tokens=58 fullText=10ch emitted=10 hadToolCall=false think=false thinkText=185ch
+2026-04-18T15:05:03: [MLXServer]   fullText preview: 131 lines.
+2026-04-18T15:05:03: [MLXServer] POST /v1/chat/completions completed in 3016ms
+2026-04-18T15:05:20: [MLXServer] POST /v1/chat/completions (64718 bytes)
+2026-04-18T15:05:20: [MLXServer] slot[0] acquired for chatcmpl-143D5E70 (active: 1/1)
+2026-04-18T15:05:21: [MLXServer]   think detection: lastTokensText="?<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:05:21: [MLXServer] slot[0] cache=hit prefix=14838/14861 new=23 prefill=23 stream=true tools=11 think_prefilled=true
+2026-04-18T15:05:21: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:05:21: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:05:21: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:05:21: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:05:21: [MLXServer]   think block ended, fullText=135ch
+2026-04-18T15:05:23: [MLXServer]   .info: tokens=31 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=127ch
+2026-04-18T15:05:23: [MLXServer]   fullText preview: 
+2026-04-18T15:05:23: 
+2026-04-18T15:05:23: 
+2026-04-18T15:05:23: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:05:23: [MLXServer] POST /v1/chat/completions completed in 2075ms
+2026-04-18T15:05:24: [MLXServer] POST /v1/chat/completions (65251 bytes)
+2026-04-18T15:05:24: [MLXServer] slot[0] acquired for chatcmpl-8B89CA12 (active: 1/1)
+2026-04-18T15:05:24: [MLXServer]   think detection: lastTokensText="2<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:05:24: [MLXServer] slot[0] cache=hit prefix=14859/14882 new=23 prefill=23 stream=true tools=11 think_prefilled=true
+2026-04-18T15:05:24: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:05:24: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:05:24: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:05:24: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:05:25: [MLXServer]   chunk[50]: +5ch fullText=230ch emitted=0 think=true
+2026-04-18T15:05:25: [MLXServer]   think block ended, fullText=265ch
+2026-04-18T15:05:26: [MLXServer]   .info: tokens=72 fullText=40ch emitted=40 hadToolCall=false think=false thinkText=257ch
+2026-04-18T15:05:26: [MLXServer]   fullText preview: 46,452 files (including `node_modules`).
+2026-04-18T15:05:26: [MLXServer] POST /v1/chat/completions completed in 1795ms
+2026-04-18T15:05:42: [MLXServer] POST /v1/chat/completions (65658 bytes)
+2026-04-18T15:05:42: [MLXServer] slot[0] acquired for chatcmpl-C4C45711 (active: 1/1)
+2026-04-18T15:05:42: [MLXServer]   think detection: lastTokensText="folder<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:05:42: [MLXServer] slot[0] cache=hit prefix=14880/14909 new=29 prefill=29 stream=true tools=11 think_prefilled=true
+2026-04-18T15:05:43: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:05:43: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:05:43: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:05:43: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:05:43: [MLXServer]   think block ended, fullText=223ch
+2026-04-18T15:05:43: [MLXServer]   chunk[50]: +2ch fullText=2ch emitted=0 think=false
+2026-04-18T15:05:44: [MLXServer]   .info: tokens=52 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=215ch
+2026-04-18T15:05:44: [MLXServer]   fullText preview: 
+2026-04-18T15:05:44: 
+2026-04-18T15:05:44: 
+2026-04-18T15:05:44: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:05:44: [MLXServer] POST /v1/chat/completions completed in 2518ms
+2026-04-18T15:05:45: [MLXServer] POST /v1/chat/completions (66282 bytes)
+2026-04-18T15:05:45: [MLXServer] slot[0] acquired for chatcmpl-718B9F5B (active: 1/1)
+2026-04-18T15:05:45: [MLXServer]   think detection: lastTokensText="7<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:05:45: [MLXServer] Evicting session 1 (22 tokens, idle 305s)
+2026-04-18T15:05:45: [MLXServer] slot[0] cache=hit prefix=14907/14927 new=20 prefill=20 stream=true tools=11 think_prefilled=true
+2026-04-18T15:05:45: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:05:45: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:05:45: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:05:45: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:05:46: [MLXServer]   think block ended, fullText=116ch
+2026-04-18T15:05:46: [MLXServer]   .info: tokens=31 fullText=9ch emitted=9 hadToolCall=false think=false thinkText=108ch
+2026-04-18T15:05:46: [MLXServer]   fullText preview: 17 files.
+2026-04-18T15:05:46: [MLXServer] POST /v1/chat/completions completed in 904ms
+2026-04-18T15:05:54: [MLXServer] GET /metrics (0 bytes)
+2026-04-18T15:05:54: [MLXServer] GET /metrics completed in 0ms
+2026-04-18T15:07:13: [MLXServer] Loading model: /Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-UD-MLX-4bit
+2026-04-18T15:07:16: [MLXServer] Auto-configured: 10 max cached sessions (48GB RAM)
+2026-04-18T15:07:16: [MLXServer] Parallel inference slots: 1
+2026-04-18T15:07:16: [MLXServer] KV cache scheme: turbo4v2
+2026-04-18T15:07:16: [MLXServer] Listening on http://127.0.0.1:8091
+2026-04-18T15:07:16: [MLXServer] Endpoints: GET /v1/models, POST /v1/chat/completions, GET /tokenizer_info, POST /tokenize, GET /metrics, GET /slots
+2026-04-18T15:07:21: [MLXServer] GET /v1/models (0 bytes)
+2026-04-18T15:07:21: [MLXServer] GET /v1/models completed in 0ms
+2026-04-18T15:07:21: [MLXServer] POST /v1/chat/completions (119 bytes)
+2026-04-18T15:07:21: [MLXServer] slot[0] acquired for chatcmpl-D4FA2E30 (active: 1/1)
+2026-04-18T15:07:21: [MLXServer]   think detection: lastTokensText=" ok<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:07:21: [MLXServer] slot[0] cache=miss tokens=15 sessions=1 prefill=15 stream=false tools=0 think_prefilled=true
+2026-04-18T15:07:23: [MLXServer]   non-streaming fullText (168ch): Thinking Process:
+2026-04-18T15:07:23: 1.  **Analyze the Request:** The user wants me to reply with *only* "ok".
+2026-04-18T15:07:23: 2.  **Formulate the Output:** The output should be exactly "ok".
+2026-04-18T15:07:23: 3.  **Check
+2026-04-18T15:07:23: [MLXServer]   non-streaming fullText repr: "Thinking Process:\n1.  **Analyze the Request:** The user wants me to reply with *only* \"ok\".\n2.  **Formulate the Output:** The output should be exactly \"ok\".\n3.  **Check"
+2026-04-18T15:07:23: [MLXServer] POST /v1/chat/completions completed in 1635ms
+2026-04-18T15:07:41: [MLXServer] POST /v1/chat/completions (2594 bytes)
+2026-04-18T15:07:41: [MLXServer] slot[0] acquired for chatcmpl-7CDBC751 (active: 1/1)
+2026-04-18T15:07:41: [MLXServer]   think detection: lastTokensText="?<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:07:41: [MLXServer] slot[0] cache=hit prefix=1/555 new=554 prefill=554 stream=true tools=0 think_prefilled=true
+2026-04-18T15:07:41: [MLXServer] POST /v1/chat/completions (56006 bytes)
+2026-04-18T15:07:46: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:07:46: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:07:46: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:07:46: [MLXServer]   chunk[3]: +3ch fullText=11ch emitted=0 think=true
+2026-04-18T15:07:46: [MLXServer]   chunk[50]: +2ch fullText=205ch emitted=0 think=true
+2026-04-18T15:07:47: [MLXServer]   chunk[100]: +1ch fullText=366ch emitted=0 think=true
+2026-04-18T15:07:47: [MLXServer]   think block ended, fullText=433ch
+2026-04-18T15:07:47: [MLXServer]   .info: tokens=122 fullText=24ch emitted=24 hadToolCall=false think=false thinkText=425ch
+2026-04-18T15:07:47: [MLXServer]   fullText preview: Counting lines in readme
+2026-04-18T15:07:47: [MLXServer] slot[0] acquired for chatcmpl-AAB14DBE (active: 1/1)
+2026-04-18T15:07:47: [MLXServer] POST /v1/chat/completions completed in 6525ms
+2026-04-18T15:07:48: [MLXServer]   think detection: lastTokensText="?<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:07:48: [MLXServer] slot[0] cache=hit prefix=3/12617 new=12614 prefill=12614 stream=true tools=11 think_prefilled=true
+2026-04-18T15:08:30: [MLXServer] POST /v1/chat/completions (139 bytes)
+2026-04-18T15:09:05: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:05: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:09:05: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:09:05: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:09:06: [MLXServer]   think block ended, fullText=130ch
+2026-04-18T15:09:06: [MLXServer]   .info: tokens=33 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=122ch
+2026-04-18T15:09:06: [MLXServer]   fullText preview: 
+2026-04-18T15:09:06: 
+2026-04-18T15:09:06: 
+2026-04-18T15:09:06: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:09:06: [MLXServer] slot[0] acquired for chatcmpl-8925287B (active: 1/1)
+2026-04-18T15:09:06: [MLXServer] POST /v1/chat/completions completed in 85148ms
+2026-04-18T15:09:06: [MLXServer]   think detection: lastTokensText=".<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:09:06: [MLXServer] slot[0] cache=hit prefix=3/23 new=20 prefill=20 stream=true tools=0 think_prefilled=true
+2026-04-18T15:09:06: [MLXServer] POST /v1/chat/completions (56527 bytes)
+2026-04-18T15:09:06: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:06: [MLXServer]   chunk[1]: +4ch fullText=4ch emitted=0 think=true
+2026-04-18T15:09:06: [MLXServer]   chunk[2]: +2ch fullText=6ch emitted=0 think=true
+2026-04-18T15:09:06: [MLXServer]   chunk[3]: +2ch fullText=8ch emitted=0 think=true
+2026-04-18T15:09:07: [MLXServer]   chunk[50]: +2ch fullText=166ch emitted=0 think=true
+2026-04-18T15:09:07: [MLXServer]   .info: tokens=81 fullText=243ch emitted=0 hadToolCall=false think=true thinkText=243ch
+2026-04-18T15:09:07: [MLXServer]   fullText preview: Here's a thinking process:
+2026-04-18T15:09:07: 
+2026-04-18T15:09:07: 1.  **Analyze User Input:** The user asks "What is 7+3? Reply with just the number."
+2026-04-18T15:09:07: 2.  **Identify Key Constraints:** 
+2026-04-18T15:09:07:    - Calculate 7 + 3
+2026-04-18T15:09:07:    - Reply *only* with the number
+2026-04-18T15:09:07: 3.  **Perform Calculation:** 7 + 3 = 10
+2026-04-18T15:09:07: 
+2026-04-18T15:09:07: [MLXServer] slot[0] acquired for chatcmpl-1B189EF3 (active: 1/1)
+2026-04-18T15:09:07: [MLXServer] POST /v1/chat/completions completed in 37838ms
+2026-04-18T15:09:08: [MLXServer]   think detection: lastTokensText=".md<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:09:08: [MLXServer] slot[0] cache=hit prefix=12616/12666 new=50 prefill=50 stream=true tools=11 think_prefilled=true
+2026-04-18T15:09:08: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:08: [MLXServer]   chunk[1]: +5ch fullText=5ch emitted=0 think=true
+2026-04-18T15:09:08: [MLXServer]   chunk[2]: +4ch fullText=9ch emitted=0 think=true
+2026-04-18T15:09:08: [MLXServer]   chunk[3]: +4ch fullText=13ch emitted=0 think=true
+2026-04-18T15:09:09: [MLXServer]   think block ended, fullText=160ch
+2026-04-18T15:09:10: [MLXServer]   .info: tokens=41 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=152ch
+2026-04-18T15:09:10: [MLXServer]   fullText preview: 
+2026-04-18T15:09:10: 
+2026-04-18T15:09:10: 
+2026-04-18T15:09:10: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:09:10: [MLXServer] POST /v1/chat/completions completed in 3640ms
+2026-04-18T15:09:10: [MLXServer] POST /v1/chat/completions (57267 bytes)
+2026-04-18T15:09:10: [MLXServer] slot[0] acquired for chatcmpl-D55AC4CA (active: 1/1)
+2026-04-18T15:09:10: [MLXServer]   think detection: lastTokensText=" total<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:09:10: [MLXServer] slot[0] cache=hit prefix=12665/12732 new=67 prefill=67 stream=true tools=11 think_prefilled=true
+2026-04-18T15:09:11: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:11: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:09:11: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:09:11: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:09:12: [MLXServer]   think block ended, fullText=120ch
+2026-04-18T15:09:12: [MLXServer]   chunk[50]: +3ch fullText=71ch emitted=68 think=false
+2026-04-18T15:09:12: [MLXServer]   .info: tokens=60 fullText=99ch emitted=99 hadToolCall=false think=false thinkText=112ch
+2026-04-18T15:09:12: [MLXServer]   fullText preview: The project has two README files:
+2026-04-18T15:09:12: 
+2026-04-18T15:09:12: - **Root README.md**: 131 lines
+2026-04-18T15:09:12: - **python/README.md**: 41 lines
+2026-04-18T15:09:12: [MLXServer] POST /v1/chat/completions completed in 1882ms
+2026-04-18T15:09:24: [MLXServer] POST /v1/chat/completions (57620 bytes)
+2026-04-18T15:09:24: [MLXServer] slot[0] acquired for chatcmpl-D31FCBFF (active: 1/1)
+2026-04-18T15:09:24: [MLXServer]   think detection: lastTokensText="folder<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:09:24: [MLXServer] slot[0] cache=hit prefix=12731/12787 new=56 prefill=56 stream=true tools=11 think_prefilled=true
+2026-04-18T15:09:25: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:25: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:09:25: [MLXServer]   chunk[2]: +5ch fullText=8ch emitted=0 think=true
+2026-04-18T15:09:25: [MLXServer]   chunk[3]: +6ch fullText=14ch emitted=0 think=true
+2026-04-18T15:09:26: [MLXServer]   chunk[50]: +3ch fullText=218ch emitted=0 think=true
+2026-04-18T15:09:26: [MLXServer]   think block ended, fullText=273ch
+2026-04-18T15:09:27: [MLXServer]   .info: tokens=64 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=265ch
+2026-04-18T15:09:27: [MLXServer]   fullText preview: 
+2026-04-18T15:09:27: 
+2026-04-18T15:09:27: 
+2026-04-18T15:09:27: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:09:27: [MLXServer] POST /v1/chat/completions completed in 2934ms
+2026-04-18T15:09:28: [MLXServer] POST /v1/chat/completions (58339 bytes)
+2026-04-18T15:09:28: [MLXServer] slot[0] acquired for chatcmpl-0BCFBCF8 (active: 1/1)
+2026-04-18T15:09:28: [MLXServer]   think detection: lastTokensText="9<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:09:28: [MLXServer] slot[0] cache=hit prefix=12786/12809 new=23 prefill=23 stream=true tools=11 think_prefilled=true
+2026-04-18T15:09:28: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:28: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:09:28: [MLXServer]   chunk[2]: +7ch fullText=10ch emitted=0 think=true
+2026-04-18T15:09:28: [MLXServer]   chunk[3]: +6ch fullText=16ch emitted=0 think=true
+2026-04-18T15:09:28: [MLXServer]   think block ended, fullText=140ch
+2026-04-18T15:09:30: [MLXServer]   .info: tokens=33 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=132ch
+2026-04-18T15:09:30: [MLXServer]   fullText preview: 
+2026-04-18T15:09:30: 
+2026-04-18T15:09:30: 
+2026-04-18T15:09:30: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:09:30: [MLXServer] POST /v1/chat/completions completed in 1945ms
+2026-04-18T15:09:30: [MLXServer] POST /v1/chat/completions (58875 bytes)
+2026-04-18T15:09:30: [MLXServer] slot[0] acquired for chatcmpl-08D78895 (active: 1/1)
+2026-04-18T15:09:30: [MLXServer]   think detection: lastTokensText="1<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:09:30: [MLXServer] slot[0] cache=hit prefix=12808/12831 new=23 prefill=23 stream=true tools=11 think_prefilled=true
+2026-04-18T15:09:30: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:30: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:09:30: [MLXServer]   chunk[2]: +6ch fullText=9ch emitted=0 think=true
+2026-04-18T15:09:30: [MLXServer]   chunk[3]: +8ch fullText=17ch emitted=0 think=true
+2026-04-18T15:09:31: [MLXServer]   chunk[50]: +4ch fullText=211ch emitted=0 think=true
+2026-04-18T15:09:31: [MLXServer]   think block ended, fullText=267ch
+2026-04-18T15:09:32: [MLXServer]   .info: tokens=64 fullText=2ch emitted=0 hadToolCall=true think=false thinkText=259ch
+2026-04-18T15:09:32: [MLXServer]   fullText preview: 
+2026-04-18T15:09:32: 
+2026-04-18T15:09:32: 
+2026-04-18T15:09:32: [MLXServer]   hadToolCall=true, unemitted=2ch
+2026-04-18T15:09:33: [MLXServer] POST /v1/chat/completions completed in 2577ms
+2026-04-18T15:09:33: [MLXServer] POST /v1/chat/completions (59558 bytes)
+2026-04-18T15:09:33: [MLXServer] slot[0] acquired for chatcmpl-21103EE3 (active: 1/1)
+2026-04-18T15:09:33: [MLXServer]   think detection: lastTokensText="7<|im_end|>\n<|im_start|>assistant\n<think>\n" prefillsThink=true
+2026-04-18T15:09:33: [MLXServer] slot[0] cache=hit prefix=12830/12853 new=23 prefill=23 stream=true tools=11 think_prefilled=true
+2026-04-18T15:09:33: [MLXServer]   first token arrived, prefill done
+2026-04-18T15:09:33: [MLXServer]   chunk[1]: +3ch fullText=3ch emitted=0 think=true
+2026-04-18T15:09:33: [MLXServer]   chunk[2]: +6ch fullText=9ch emitted=0 think=true
+2026-04-18T15:09:33: [MLXServer]   chunk[3]: +3ch fullText=12ch emitted=0 think=true
+2026-04-18T15:09:34: [MLXServer]   think block ended, fullText=87ch
+2026-04-18T15:09:34: [MLXServer]   .info: tokens=38 fullText=74ch emitted=74 hadToolCall=false think=false thinkText=79ch
+2026-04-18T15:09:34: [MLXServer]   fullText preview: There are **17 files** in the current directory (not counting subfolders).
+2026-04-18T15:09:34: [MLXServer] POST /v1/chat/completions completed in 1020ms
+2026-04-18T21:37:57: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load kernel g0_copybool_bfloat16
+2026-04-18T21:37:57:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/transforms.cpp:73
+2026-04-19T13:17:11: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:17:11: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:17:11:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:02: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:02: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:02:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:09: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:09: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:09:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:17: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:17: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:17:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:24: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:24: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:24:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:31: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:31: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:31:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:39: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:39: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:39:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:46: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:46: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:46:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:19:53: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:19:53: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:19:53:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:01: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:01: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:01:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:08: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:08: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:08:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:16: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:16: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:16:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:23: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:23: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:23:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:30: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:30: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:30:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:38: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:38: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:38:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:45: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:45: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:45:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:52: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:52: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:52:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:20:59: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:20:59: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:20:59:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:21:07: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:21:07: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:21:07:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:21:14: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:21:14: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:21:14:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:21:21: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:21:21: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:21:21:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:21:28: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:21:28: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:21:28:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:21:36: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:21:36: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:21:36:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:21:43: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:21:43: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:21:43:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:21:51: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:21:51: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:21:51:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
+2026-04-19T13:32:07: MLX/ErrorHandler.swift:345: Fatal error: [metal::Device] Unable to load function gated_delta_step_fused_float32_128_128_16_32
+2026-04-19T13:32:07: Function gated_delta_step_fused_float32_128_128_16_32 was not found in the library
+2026-04-19T13:32:07:  at /Users/sachinverma/personal/mlx-swift-lm/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c/fast.cpp:988
