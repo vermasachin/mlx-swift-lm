@@ -104,3 +104,7 @@ mlx.metallib
 
 # Large trace/profiling files (keep locally, too big for git)
 benchmarks/notes/*.xml
+
+.venv/
+# bench-results/ is intentionally checked in so baselines travel with the
+# repo — reviewers comparing a change to "before" need the before numbers.

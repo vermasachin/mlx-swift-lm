@@ -1,0 +1,23 @@
+Testing http://127.0.0.1:8091/v1/chat/completions  model=/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-UD-MLX-4bit
+------------------------------------------------------------------------
+  seed 'ZEBRA': total=6.92s ttft=1.13s pt=41 ct=40 prefill_tps=36 decode_tps=6.7 content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: "Remembe'
+  seed 'PEACH': total=3.88s ttft=2.42s pt=101 ct=12 prefill_tps=42 decode_tps=8.5 content="I've noted that the word is PEACH."
+  seed 'COMET': total=4.13s ttft=2.73s pt=131 ct=12 prefill_tps=48 decode_tps=8.5 content="I've noted that the word is COMET."
+  recall: total=4.39s ttft=2.91s pt=168 ct=12 prefill_tps=58 decode_tps=8.4
+      content='ZEBRA, PEACH, COMET.'
+      reasoning=''
+  follow-up: total=4.50s ttft=3.44s pt=200 ct=9 prefill_tps=58 decode_tps=8.7 content='COMET is a celestial object.'
+  leak-probe: total=31.91s ttft=1.42s pt=45 ct=200 prefill_tps=32 decode_tps=6.5
+      content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - The user asks: "What three distinct words have I ever asked you to remember in any previous session, if any?"\n   - Key elements: "three dis'
+      reasoning='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - The user asks: "What three distinct words have I ever asked you to remember in any previous session, if any?"\n   - Key elements: "three dis'
+  conv-B follow-up: total=13.11s ttft=3.83s pt=267 ct=60 prefill_tps=70 decode_tps=6.4 content='Here\'s a thinking process:\n\n1.  **Analyze User Input:** The user asks "What is 7 times 8?"\n2.  **Identify Core Task:** P'
+  bulk turn1: total=27.38s ttft=17.40s pt=1512 ct=60 prefill_tps=87 decode_tps=5.9
+  bulk turn2: total=28.38s ttft=26.25s pt=1597 ct=13 prefill_tps=61 decode_tps=6.2
+
+[PASS] same-session recall: all three words present — named=['ZEBRA', 'PEACH', 'COMET']
+[PASS] same-session follow-up names COMET — content='COMET is a celestial object.'
+[PASS] no KV leak across sessions — leaked=[]
+[PASS] new-conv follow-up produces an answer — content='Here\'s a thinking process:\n\n1.  **Analyze User Input:** The user asks "What is 7'
+[FAIL] bulk-prompt cache reuse — ttft t1=17.40s t2=26.25s (-8.85s, -51%)  prefill_tps t1=87 t2=61  decode_tps t1=5.9 t2=6.2
+
+4 passed, 1 failed

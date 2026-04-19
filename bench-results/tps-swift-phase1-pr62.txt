@@ -1,0 +1,37 @@
+Benchmarking http://127.0.0.1:8091/v1/chat/completions  model=/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-UD-MLX-4bit  repeats=3
+Label: swift-phase1-pr62   Results: bench-results/tps-swift-phase1-pr62.txt
+----------------------------------------------------------------------------------------------------
+short_long                   pt=   35  ct~ 400  prefill_tps=  199.8 (min=195 max=202)  decode_tps=  64.0 (min=63.7 max=64.5)
+    run1: pt=35 ct=400 prefill_tps=202.0 decode_tps=64.5
+    run2: pt=36 ct=400 prefill_tps=199.8 decode_tps=63.7
+    run3: pt=36 ct=400 prefill_tps=195.0 decode_tps=64.0
+long_short                   pt= 4027  ct~  60  prefill_tps=  572.8 (min=511 max=646)  decode_tps=  58.5 (min=56.2 max=61.0)
+    run1: pt=4027 ct=60 prefill_tps=646.3 decode_tps=61.0
+    run2: pt=4032 ct=60 prefill_tps=572.8 decode_tps=58.5
+    run3: pt=4032 ct=60 prefill_tps=511.3 decode_tps=56.2
+opencode_like                pt=30022  ct~  23  prefill_tps=  180.8 (min=130 max=446)  decode_tps= 111.7 (min=48.6 max=128.0)
+    run1: pt=30022 ct=60 prefill_tps=446.4 decode_tps=48.6
+    run2: pt=30028 ct=4 prefill_tps=180.8 decode_tps=128.0
+    run3: pt=30028 ct=4 prefill_tps=130.1 decode_tps=111.7
+
+[multiturn] — reuse should lift prefill_tps on turns 2+
+  turn 1                       pt=   30  ct~   9  prefill_tps=   60.5 (min=59 max=63)  decode_tps=  46.0 (min=45.7 max=46.5)
+      run1: pt=30 ct=9 prefill_tps=58.8 decode_tps=45.7
+      run2: pt=36 ct=9 prefill_tps=60.5 decode_tps=46.0
+      run3: pt=36 ct=9 prefill_tps=63.3 decode_tps=46.5
+  turn 2                       pt=   24  ct~  21  prefill_tps=   95.4 (min=49 max=108)  decode_tps=  57.2 (min=34.4 max=57.4)
+      run1: pt=24 ct=6 prefill_tps=48.6 decode_tps=57.4
+      run2: pt=58 ct=50 prefill_tps=107.6 decode_tps=34.4
+      run3: pt=58 ct=6 prefill_tps=95.4 decode_tps=57.2
+  turn 3                       pt=   21  ct~   9  prefill_tps=   93.6 (min=44 max=95)  decode_tps=  51.6 (min=40.5 max=52.3)
+      run1: pt=21 ct=13 prefill_tps=43.7 decode_tps=40.5
+      run2: pt=77 ct=7 prefill_tps=94.5 decode_tps=52.3
+      run3: pt=77 ct=7 prefill_tps=93.6 decode_tps=51.6
+  turn 4                       pt=   22  ct~  37  prefill_tps=  114.7 (min=47 max=120)  decode_tps=  34.6 (min=34.4 max=41.3)
+      run1: pt=22 ct=12 prefill_tps=46.8 decode_tps=41.3
+      run2: pt=97 ct=50 prefill_tps=119.9 decode_tps=34.4
+      run3: pt=97 ct=50 prefill_tps=114.7 decode_tps=34.6
+  turn 5                       pt=   20  ct~  38  prefill_tps=  122.4 (min=42 max=136)  decode_tps=  34.4 (min=34.3 max=41.6)
+      run1: pt=20 ct=13 prefill_tps=42.5 decode_tps=41.6
+      run2: pt=115 ct=50 prefill_tps=135.8 decode_tps=34.4
+      run3: pt=115 ct=50 prefill_tps=122.4 decode_tps=34.3

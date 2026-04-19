@@ -1,0 +1,23 @@
+Testing http://127.0.0.1:8091/v1/chat/completions  model=/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-UD-MLX-4bit
+------------------------------------------------------------------------
+  seed 'ZEBRA': total=1.23s ttft=0.61s pt=41 ct=40 prefill_tps=67 decode_tps=62.5 content=''
+  seed 'PEACH': total=0.86s ttft=0.25s pt=60 ct=40 prefill_tps=242 decode_tps=63.5 content=''
+  seed 'COMET': total=0.85s ttft=0.23s pt=79 ct=40 prefill_tps=342 decode_tps=63.5 content=''
+  recall: total=3.42s ttft=0.26s pt=105 ct=200 prefill_tps=399 decode_tps=63.0
+      content=''
+      reasoning='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User asks: "What three words did I ask you to remember, in order?"\n   - Previous interactions: User told me to remember "ZEBRA", then "PEAC'
+  follow-up: total=3.35s ttft=0.25s pt=123 ct=200 prefill_tps=494 decode_tps=64.2 content=''
+  leak-probe: total=3.35s ttft=0.32s pt=45 ct=200 prefill_tps=140 decode_tps=65.7
+      content=''
+      reasoning='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User asks: "What three distinct words have I ever asked you to remember in any previous session, if any?"\n   - Key elements: "three distinc'
+  conv-B follow-up: total=1.15s ttft=0.23s pt=63 ct=60 prefill_tps=279 decode_tps=64.1 content=''
+  bulk turn1: total=3.11s ttft=2.19s pt=1511 ct=60 prefill_tps=691 decode_tps=63.8
+  bulk turn2: total=1.40s ttft=0.48s pt=1532 ct=60 prefill_tps=3206 decode_tps=63.7
+
+[PASS] same-session recall: all three words present — named=['ZEBRA', 'PEACH', 'COMET']
+[PASS] same-session follow-up names COMET — content=''
+[PASS] no KV leak across sessions — leaked=[]
+[PASS] new-conv follow-up produces an answer — content=''
+[PASS] bulk-prompt cache reuse — ttft t1=2.19s t2=0.48s (+1.71s, +78%)  prefill_tps t1=691 t2=3206  decode_tps t1=63.8 t2=63.7
+
+5 passed, 0 failed

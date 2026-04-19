@@ -1,0 +1,23 @@
+Testing http://127.0.0.1:8091/v1/chat/completions  model=/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-UD-MLX-4bit
+------------------------------------------------------------------------
+  seed 'ZEBRA': total=0.87s ttft=0.60s pt=35 ct=11 prefill_tps=58 decode_tps=43.4 content='I have remembered the word ZEBRA.'
+  seed 'PEACH': total=0.71s ttft=0.47s pt=27 ct=10 prefill_tps=57 decode_tps=44.3 content='I have remembered the word PEACH.'
+  seed 'COMET': total=0.72s ttft=0.49s pt=26 ct=10 prefill_tps=54 decode_tps=44.7 content='I have remembered the word COMET.'
+  recall: total=4.01s ttft=0.45s pt=33 ct=123 prefill_tps=74 decode_tps=34.5
+      content='You asked me to remember ZEBRA, PEACH, and COMET.'
+      reasoning='The user is asking me to recall three specific words they asked me to remember in previous turns.\nLooking back at the conversation history:\n1. User said "Remember the word ZEBRA." -> I confirmed.\n2. U'
+  follow-up: total=9.27s ttft=4.01s pt=36 ct=180 prefill_tps=9 decode_tps=34.3 content='Comet is the celestial object.'
+  leak-probe: total=6.35s ttft=0.65s pt=39 ct=200 prefill_tps=60 decode_tps=34.9
+      content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - Question: "What three distinct words have I ever asked you to remember in any previous session, if any?"\n   - Key constraints: \n     - Look'
+      reasoning='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - Question: "What three distinct words have I ever asked you to remember in any previous session, if any?"\n   - Key constraints: \n     - Look'
+  conv-B follow-up: total=3.47s ttft=1.74s pt=220 ct=60 prefill_tps=126 decode_tps=34.1 content='The user wants me to answer a simple math question: "What is 7 times 8?"\n\n1.  **Analyze the input:** The user asks for t'
+  bulk turn1: total=11.84s ttft=11.55s pt=1511 ct=12 prefill_tps=131 decode_tps=42.3
+  bulk turn2: total=2.24s ttft=0.52s pt=33 ct=60 prefill_tps=64 decode_tps=34.4
+
+[PASS] same-session recall: all three words present — named=['ZEBRA', 'PEACH', 'COMET']
+[PASS] same-session follow-up names COMET — content='Comet is the celestial object.'
+[PASS] no KV leak across sessions — leaked=[]
+[PASS] new-conv follow-up produces an answer — content='The user wants me to answer a simple math question: "What is 7 times 8?"\n\n1.  **'
+[PASS] bulk-prompt cache reuse — ttft t1=11.55s t2=0.52s (+11.03s, +96%)  prefill_tps t1=131 t2=64  decode_tps t1=42.3 t2=34.4
+
+5 passed, 0 failed

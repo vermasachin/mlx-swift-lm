@@ -1,0 +1,23 @@
+Testing http://127.0.0.1:8091/v1/chat/completions  model=/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-UD-MLX-4bit
+------------------------------------------------------------------------
+  seed 'ZEBRA': total=1.68s ttft=0.55s pt=41 ct=40 prefill_tps=75 decode_tps=34.6 content='Thinking Process:\n\n1.  **Analyze User Input:** "Remember the word ZEBRA."\n2.  **'
+  seed 'PEACH': total=1.67s ttft=0.55s pt=97 ct=40 prefill_tps=175 decode_tps=34.8 content='The user wants me to remember the word "PEACH".\nI need to confirm this action co'
+  seed 'COMET': total=1.70s ttft=0.56s pt=153 ct=40 prefill_tps=272 decode_tps=34.4 content='Thinking Process:\n\n1.  **Analyze User Input:** "Remember the word COMET."\n2.  **'
+  recall: total=9.37s ttft=0.60s pt=215 ct=194 prefill_tps=358 decode_tps=22.1
+      content='You asked me to remember **ZEBRA**, **PEACH**, and **COMET**.'
+      reasoning='The user is asking for the three words they asked me to remember: ZEBRA, PEACH, and COMET.\n\nThinking Process:\n\n1.  **Analyze User Input:** "What three words did I ask you to remember, in order?"\n2.  *'
+  follow-up: total=4.77s ttft=0.68s pt=252 ct=137 prefill_tps=368 decode_tps=33.6 content='It was the **comet**.'
+  leak-probe: total=6.32s ttft=0.61s pt=45 ct=200 prefill_tps=74 decode_tps=34.8
+      content='Here\'s a thinking process:\n\n1.  **Analyze User Input:** "What three distinct words have I ever asked you to remember in any previous session, if any?"\n2.  **Identify Key Constraints/Concepts:**\n   - "'
+      reasoning='Here\'s a thinking process:\n\n1.  **Analyze User Input:** "What three distinct words have I ever asked you to remember in any previous session, if any?"\n2.  **Identify Key Constraints/Concepts:**\n   - "'
+  conv-B follow-up: total=3.47s ttft=1.73s pt=263 ct=60 prefill_tps=152 decode_tps=34.0 content='The user is asking a simple math question: "What is 7 times 8?".\nI need to provide the answer concisely, as per the syst'
+  bulk turn1: total=15.20s ttft=13.45s pt=1515 ct=60 prefill_tps=113 decode_tps=33.7
+  bulk turn2: total=2.68s ttft=0.96s pt=1596 ct=60 prefill_tps=1658 decode_tps=34.4
+
+[PASS] same-session recall: all three words present — named=['ZEBRA', 'PEACH', 'COMET']
+[PASS] same-session follow-up names COMET — content='It was the **comet**.'
+[PASS] no KV leak across sessions — leaked=[]
+[PASS] new-conv follow-up produces an answer — content='The user is asking a simple math question: "What is 7 times 8?".\nI need to provi'
+[PASS] bulk-prompt cache reuse — ttft t1=13.45s t2=0.96s (+12.49s, +93%)  prefill_tps t1=113 t2=1658  decode_tps t1=33.7 t2=34.4
+
+5 passed, 0 failed
