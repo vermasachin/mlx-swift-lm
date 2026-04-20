@@ -1062,7 +1062,17 @@ final class SimpleHTTPServer {
                             let maxTok = request.max_tokens ?? Int.max
                             let fr = hadToolCall ? "tool_calls" : (info.generationTokenCount >= maxTok ? "length" : "stop")
                             let responseModel = reqModel ?? modelId
-                            let usageJSON = ",\"usage\":{\"prompt_tokens\":\(info.promptTokenCount),\"completion_tokens\":\(info.generationTokenCount),\"total_tokens\":\(info.promptTokenCount + info.generationTokenCount)}"
+                            // `info.promptTokenCount` is the TokenIterator's count of
+                            // tokens it actually prefilled = delta after cache trim.
+                            // On a cache hit that collapses to only the new tail, so
+                            // reporting it as prompt_tokens undercounts by the cached
+                            // prefix — opencode then shows the wrong context usage.
+                            // OpenAI spec: prompt_tokens = full logical prompt, with
+                            // the cached portion reported separately in
+                            // prompt_tokens_details.cached_tokens.
+                            let promptTokensFull = tokens.count
+                            let cachedTokens = max(0, tokens.count - newTokens.count)
+                            let usageJSON = ",\"usage\":{\"prompt_tokens\":\(promptTokensFull),\"completion_tokens\":\(info.generationTokenCount),\"total_tokens\":\(promptTokensFull + info.generationTokenCount),\"prompt_tokens_details\":{\"cached_tokens\":\(cachedTokens)}}"
                             let finalEvent = "data: {\"id\":\"\(requestId)\",\"object\":\"chat.completion.chunk\",\"created\":\(Int(Date().timeIntervalSince1970)),\"model\":\"\(responseModel)\",\"system_fingerprint\":\"mlx-swift-v1\",\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"\(fr)\"}]\(usageJSON)}\n\ndata: [DONE]\n\n"
                             _ = finalEvent.withCString { write(fd, $0, Int(strlen($0))) }
                         }
