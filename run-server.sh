@@ -27,6 +27,10 @@ BIN="$REPO_ROOT/.build/arm64-apple-macosx/release/MLXServer"
 MODEL="${MODEL:-/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-4bit-mlxc}"
 PORT="${PORT:-8091}"
 SLOTS="${SLOTS:-1}"
+# Default to TurboQuant 4-bit K + 2-bit V. On this hybrid-Mamba model the
+# decode-TPS delta vs bf16 KV is ~1% (only 10 of 40 layers are attention),
+# but it saves memory on the attention KV and costs ~nothing to leave on.
+KV_SCHEME="${KV_SCHEME:-turbo4v2}"
 
 if [[ ! -x "$BIN" ]]; then
     echo "MLXServer binary not found at $BIN" >&2
