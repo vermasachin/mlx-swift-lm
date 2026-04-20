@@ -501,6 +501,7 @@ final class SimpleHTTPServer {
     let promptCache: ServerPromptCache
     let slotManager: SlotManager
     let slotCount: Int
+    let kvScheme: String?
     private var serverSocket: Int32 = -1
     private var memoryPressureSource: DispatchSourceMemoryPressure?
     static let maxBodySize = 10 * 1024 * 1024
@@ -515,16 +516,18 @@ final class SimpleHTTPServer {
         return max(2, min(sessions, 10))  // clamp 2-10
     }
 
-    init(port: UInt16, container: ModelContainer, modelId: String, slotCount: Int = 4) {
+    init(port: UInt16, container: ModelContainer, modelId: String, slotCount: Int = 4, kvScheme: String? = nil) {
         self.port = port
         self.container = container
         self.modelId = modelId
         self.slotCount = slotCount
+        self.kvScheme = kvScheme
         let maxSess = SimpleHTTPServer.autoMaxSessions()
         self.promptCache = ServerPromptCache(maxSessions: maxSess)
         self.slotManager = SlotManager(slotCount: slotCount)
         log("Auto-configured: \(maxSess) max cached sessions (\(ProcessInfo.processInfo.physicalMemory / (1024*1024*1024))GB RAM)")
         log("Parallel inference slots: \(slotCount)")
+        log("KV scheme: \(kvScheme ?? "none (bf16)")")
     }
 
     func start() throws {
@@ -837,6 +840,7 @@ final class SimpleHTTPServer {
             if let maxTokens = request.max_tokens {
                 params.maxTokens = maxTokens
             }
+            params.kvScheme = self.kvScheme
 
             // Set tool call format if tools are present
             if toolsAny != nil {
@@ -1219,6 +1223,7 @@ final class SimpleHTTPServer {
 
             var params = GenerateParameters(temperature: temperature)
             params.maxTokens = maxTokens
+            params.kvScheme = self.kvScheme
 
             log("completions: \(tokens.count) prompt tokens, max_tokens=\(maxTokens), stream=\(stream)")
 
@@ -1487,6 +1492,10 @@ struct MLXServerApp {
             i + 1 < args.count ? Int(args[i + 1]) : nil
         } ?? 4  // Default to 4 parallel slots (like llama-server)
 
+        let kvScheme: String? = args.firstIndex(of: "--kv").flatMap { i in
+            i + 1 < args.count ? args[i + 1] : nil
+        }
+
         log("Loading model: \(model)")
         let config: ModelConfiguration
         if model.hasPrefix("/") || model.hasPrefix("~") || model.hasPrefix(".") {
@@ -1512,7 +1521,7 @@ struct MLXServerApp {
             }
         }
 
-        let server = SimpleHTTPServer(port: port, container: container, modelId: model, slotCount: slots)
+        let server = SimpleHTTPServer(port: port, container: container, modelId: model, slotCount: slots, kvScheme: kvScheme)
         try server.start()
     }
 }
