@@ -241,13 +241,32 @@ actor ServerPromptCache {
             let session = sessions[bestIdx]
             // Trim based on actual KV cache size, not tokenIds.count.
             // The cache may have extra decode tokens from interrupted generation.
-            let actualCacheSize = session.kvCache.first?.offset ?? session.tokenIds.count
+            //
+            // Hybrid models (Qwen3.x etc.) mix KVCacheSimple with MambaCache.
+            // MambaCache.offset is always 0 (recurrent state, no token index),
+            // so session.kvCache.first?.offset is unreliable. Read offset from
+            // the first KVCacheSimple; fall back to tokenIds.count only if
+            // there isn't one.
+            let simpleOffset = session.kvCache
+                .compactMap { ($0 as? KVCacheSimple)?.offset }
+                .first
+            let actualCacheSize = simpleOffset ?? session.tokenIds.count
             let trimAmount = actualCacheSize - bestPrefix
 
             // If the new request extends the cached session (same prefix, more tokens),
             // we can trim and use in-place. If it diverges (different suffix), we need
             // to copy so the original stays intact for future reuse.
             let isExtension = (bestPrefix == session.tokenIds.count) || (trimAmount == 0)
+
+            // Hybrid models with MambaCache cannot be safely forked: copy()
+            // duplicates the recurrent state but trim() on Mamba is a no-op,
+            // so a forked cache would retain the previous conversation's
+            // Mamba state and leak it into the new prefill. Route forks to
+            // freshCache for these models.
+            let hasMambaCache = session.kvCache.contains { $0 is MambaCache }
+            if !isExtension && hasMambaCache {
+                return freshCache(tokens: newTokens, model: model)
+            }
 
             if isExtension {
                 // Same conversation continuing — use in-place, no copy needed
