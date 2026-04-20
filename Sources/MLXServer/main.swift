@@ -43,6 +43,8 @@ struct ChatRequest: Codable {
     let tools: AnyCodable?
     let tool_choice: AnyCodable?
     let top_p: Float?
+    let top_k: Int?
+    let min_p: Float?
     let frequency_penalty: Float?
     let presence_penalty: Float?
     let stop: AnyCodable?
@@ -50,7 +52,7 @@ struct ChatRequest: Codable {
 
     enum CodingKeys: String, CodingKey {
         case model, messages, max_tokens, temperature, stream
-        case tools, tool_choice, top_p, frequency_penalty, presence_penalty, stop, n
+        case tools, tool_choice, top_p, top_k, min_p, frequency_penalty, presence_penalty, stop, n
     }
 }
 
@@ -840,6 +842,10 @@ final class SimpleHTTPServer {
             if let maxTokens = request.max_tokens {
                 params.maxTokens = maxTokens
             }
+            // Unsloth Qwen3.x thinking+coding recipe. Honor client overrides if present.
+            params.topP = request.top_p ?? 0.95
+            params.topK = request.top_k ?? 20
+            params.minP = request.min_p ?? 0.0
             params.kvScheme = self.kvScheme
 
             // Set tool call format if tools are present
@@ -1223,6 +1229,8 @@ final class SimpleHTTPServer {
 
             var params = GenerateParameters(temperature: temperature)
             params.maxTokens = maxTokens
+            params.topP = 0.95
+            params.topK = 20
             params.kvScheme = self.kvScheme
 
             log("completions: \(tokens.count) prompt tokens, max_tokens=\(maxTokens), stream=\(stream)")

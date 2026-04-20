@@ -1895,6 +1895,7 @@ public func maybeQuantizeKVCache(
             boundaryLayers = min(2, totalKVLayers / 2)
         }
 
+        var converted = 0
         for (rank, cacheIdx) in kvLayerIndices.enumerated() {
             guard let simpleCache = cache[cacheIdx] as? KVCacheSimple else { continue }
 
@@ -1905,10 +1906,15 @@ public func maybeQuantizeKVCache(
 
             cache[cacheIdx] = simpleCache.toTurboQuantized(
                 bits: keyBits, keyBits: keyBits, valueBits: valueBits)
+            converted += 1
         }
-        // Release freed FP16 raw cache from MLX memory pool so KV delta
-        // accurately reflects compressed size
-        MLX.Memory.clearCache()
+        // Only clear the pool when we actually freed FP16 cache. Calling
+        // clearCache() every decode step is unsafe under concurrent slots —
+        // one slot can drop buffers another slot's pending command buffer
+        // still references, producing "Invalid Resource" errors.
+        if converted > 0 {
+            MLX.Memory.clearCache()
+        }
         return
     }
 

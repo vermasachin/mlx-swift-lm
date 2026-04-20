@@ -27,10 +27,12 @@ BIN="$REPO_ROOT/.build/arm64-apple-macosx/release/MLXServer"
 MODEL="${MODEL:-/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-4bit-mlxc}"
 PORT="${PORT:-8091}"
 SLOTS="${SLOTS:-4}"
-# Default to TurboQuant 4-bit K + 2-bit V. On this hybrid-Mamba model the
-# decode-TPS delta vs bf16 KV is ~1% (only 10 of 40 layers are attention),
-# but it saves memory on the attention KV and costs ~nothing to leave on.
-KV_SCHEME="${KV_SCHEME:-turbo4v2}"
+# Default to affine 4-bit KV. The TurboQuant codec variants (turbo4v2,
+# turbo0v4, etc.) have shown output corruption on Qwen3.x at longer
+# generations — output degrades into repeated "!!!!!!" once enough
+# compressed KV accumulates. Affine4 is a different codec (per-group
+# affine quant, widely used) and stays clean at length on this model.
+KV_SCHEME="${KV_SCHEME:-affine4}"
 
 if [[ ! -x "$BIN" ]]; then
     echo "MLXServer binary not found at $BIN" >&2
