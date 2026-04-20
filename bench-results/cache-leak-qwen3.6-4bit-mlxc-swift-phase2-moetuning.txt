@@ -1,0 +1,23 @@
+Testing http://127.0.0.1:8091/v1/chat/completions  model=/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-4bit-mlxc
+------------------------------------------------------------------------
+  seed 'ZEBRA': total=0.69s ttft=0.26s pt=32 ct=40 prefill_tps=125 decode_tps=90.4 content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: "Remembe'
+  seed 'PEACH': total=0.79s ttft=0.35s pt=58 ct=40 prefill_tps=163 decode_tps=90.5 content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: "Remembe'
+  seed 'COMET': total=0.80s ttft=0.36s pt=58 ct=40 prefill_tps=160 decode_tps=89.7 content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User says: "Remembe'
+  recall: total=2.66s ttft=0.44s pt=65 ct=200 prefill_tps=149 decode_tps=89.7
+      content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User asks: "What three words did I ask you to remember, in order?"\n   - I need to recall the previous interactions where the user explicitl'
+      reasoning=''
+  follow-up: total=3.41s ttft=1.17s pt=220 ct=200 prefill_tps=188 decode_tps=89.1 content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User asks: "Which of them is a celestial object?"\n   - Cont'
+  leak-probe: total=1.03s ttft=0.28s pt=39 ct=67 prefill_tps=138 decode_tps=88.4
+      content='The user is asking: "What is the capital of France?"\nI need to answer this question concisely, keeping the answer under 40 words.\nThe capital of France is Paris.\nI\'ll just state that directly.\n I\'ll j'
+      reasoning=''
+  conv-B follow-up: total=0.88s ttft=0.22s pt=27 ct=60 prefill_tps=124 decode_tps=89.4 content='The user is asking: "What is the capital of France?"\nI need to answer this question concisely, keeping the answer under '
+  bulk turn1: total=10.12s ttft=9.34s pt=1507 ct=60 prefill_tps=161 decode_tps=75.4
+  bulk turn2: total=1.62s ttft=0.84s pt=83 ct=60 prefill_tps=99 decode_tps=75.4
+
+[PASS] same-session recall: all three words present — named=['ZEBRA', 'PEACH', 'COMET']
+[PASS] same-session follow-up names COMET — content='Here\'s a thinking process:\n\n1.  **Analyze User Input:**\n   - User asks: "Which o'
+[PASS] no KV leak across sessions — leaked=[]
+[PASS] new-conv follow-up produces an answer — content='The user is asking: "What is the capital of France?"\nI need to answer this quest'
+[PASS] bulk-prompt cache reuse — ttft t1=9.34s t2=0.84s (+8.50s, +91%)  prefill_tps t1=161 t2=99  decode_tps t1=75.4 t2=75.4
+
+5 passed, 0 failed
