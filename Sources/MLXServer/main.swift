@@ -22,15 +22,28 @@ struct ChatMessage: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         role = try container.decode(String.self, forKey: .role)
-        // Content can be string, null, or array — just grab string or nil
+        // OpenAI allows content to be: a string, null, or an array of content
+        // parts (e.g. [{"type":"text","text":"..."}, {"type":"image_url",...}]).
+        // Most modern clients (opencode, continue.dev, etc.) use the array form
+        // even for plain text. Flatten text parts to a single string; skip
+        // non-text parts (images/audio aren't supported here). Silently
+        // dropping array content produced "empty message" prompts.
         if let str = try? container.decode(String.self, forKey: .content) {
             content = str
+        } else if let parts = try? container.decode([ContentPart].self, forKey: .content) {
+            let text = parts.compactMap { $0.text }.joined()
+            content = text.isEmpty ? nil : text
         } else {
             content = nil
         }
     }
 
     enum CodingKeys: String, CodingKey { case role, content }
+
+    private struct ContentPart: Decodable {
+        let type: String?
+        let text: String?
+    }
 }
 
 struct ChatRequest: Codable {
