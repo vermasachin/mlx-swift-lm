@@ -886,7 +886,18 @@ final class SimpleHTTPServer {
                     var fullText = ""
                     var thinkText = ""  // accumulated think block content
                     var emittedUpTo = 0  // index in fullText that we've already sent
-                    var inThinkBlock = false
+
+                    // Qwen3.x / Qwen3.6 chat template prefills `<think>\n` as the
+                    // opening of the assistant turn when enable_thinking=true. That
+                    // means the model's first output token is already *inside* the
+                    // think block — the `<think>` opener is in the prompt, not the
+                    // output. Without priming `inThinkBlock` here, the server sees
+                    // raw reasoning text, misses the opener check (`trimmed.hasPrefix
+                    // ("<think")`), never enters think mode, and leaks the entire
+                    // reasoning trace — including `</think>` — as visible content.
+                    // Decode the prompt tail and start primed if `<think>` is there.
+                    let lastTokensText = ctx.tokenizer.decode(tokens: Array(tokens.suffix(12)))
+                    var inThinkBlock = lastTokensText.contains("<think>")
 
                     var tokenCount = 0
                     for try await generation in try generate(
