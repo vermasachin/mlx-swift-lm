@@ -6,7 +6,11 @@ import MLXLMCommon
 import MLXNN
 
 func log(_ msg: String) {
-    FileHandle.standardError.write(Data("[MLXServer] \(msg)\n".utf8))
+    // Route informational logs to stdout. pm2 (and most process supervisors)
+    // flag stderr output as red/"error" regardless of severity, so sending
+    // everything via stderr makes normal lines look like errors. Genuine
+    // errors still go here — the "ERROR" token in the message is the signal.
+    FileHandle.standardOutput.write(Data("[MLXServer] \(msg)\n".utf8))
 }
 
 // MARK: - OpenAI Types
