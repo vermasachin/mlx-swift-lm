@@ -26,7 +26,7 @@ BIN="$REPO_ROOT/.build/arm64-apple-macosx/release/MLXServer"
 # uniform variant by setting MODEL= before launching.
 MODEL="${MODEL:-/Users/sachinverma/personal/models/mlx/Qwen3.6-35B-A3B-4bit-mlxc}"
 PORT="${PORT:-8091}"
-SLOTS="${SLOTS:-1}"
+SLOTS="${SLOTS:-4}"
 # Default to TurboQuant 4-bit K + 2-bit V. On this hybrid-Mamba model the
 # decode-TPS delta vs bf16 KV is ~1% (only 10 of 40 layers are attention),
 # but it saves memory on the attention KV and costs ~nothing to leave on.
