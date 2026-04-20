@@ -551,22 +551,13 @@ public final class LLMModelFactory: ModelFactory {
         // Load tokenizer and weights in parallel using async let.
         async let tokenizerTask = loadTokenizer(configuration: configuration, hub: hub)
 
-        // Strip VLM-style prefixes (e.g., "language_model.") from per-layer quantization keys.
-        // VLM configs like Gemma 4 store keys as "language_model.model.layers.0.mlp.gate_proj"
-        // but after sanitize, the model paths are "model.layers.0.mlp.gate_proj".
-        var plq = baseConfig.perLayerQuantization
-        if var perLayer = plq {
-            var stripped = [String: BaseConfiguration.QuantizationOption]()
-            for (key, value) in perLayer.perLayerQuantization {
-                let strippedKey = key
-                    .replacingOccurrences(of: "language_model.", with: "")
-                stripped[strippedKey] = value
-            }
-            plq = BaseConfiguration.PerLayerQuantization(
-                quantization: perLayer.quantization,
-                perLayerQuantization: stripped
-            )
-        }
+        // Per-layer quantization key remapping: some models (e.g. Gemma4 text-only
+        // loaded from a VLM-style config) need the `language_model.` prefix stripped
+        // to match Swift module paths. Others (e.g. Qwen3.5-MoE with
+        // `@ModuleInfo(key: "language_model")`) keep the prefix. Delegate to the
+        // model so each can declare its own convention. Ported from ml-explore/
+        // mlx-swift-lm commit 80b28ef (sanitize(perLayerQuantization:) hook).
+        let plq = model.sanitize(perLayerQuantization: baseConfig.perLayerQuantization)
 
         try loadWeights(
             modelDirectory: modelDirectory, model: model,
